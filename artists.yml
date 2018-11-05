@@ -1,0 +1,65 @@
+genres:
+    pop:
+        - katy perry
+        - madonna
+        - taylor swift
+        - rihanna
+        - lady gaga
+        - adele
+        - britney spears
+        - prince
+        - michael jackson
+        - selena gomez
+        - christina aguilera
+
+    rock:
+        - led zeppelin
+        - acdc
+        - queen
+        - the beatles
+        - fleetwood mac
+        - bob dylan
+        - pink floyd
+        - the clash
+        - chuck berry
+        - the doors
+        - aerosmith
+
+    heavy metal:
+        - black sabbath
+        - iron maiden
+        - metallica
+        - sepultura
+        - lamb of god
+        - opeth
+        - death
+        - amon amarth
+        - arch enemy
+        - mayhem
+        - gojira
+
+    jazz:
+        - miles davis
+        - john coltrane
+        - louis daniel armstrong
+        - dizzy gillespie
+        - duke ellington
+        - thelonious monk
+        - charlie parker
+        - ella fitzgerald
+        - benny goodman
+        - count basie
+        - lester young
+        
+    rap:
+        - dr dre
+        - eminem
+        - wu tang clan
+        - the notorious big
+        - beastie boys
+        - dmx
+        - nas
+        - public enemy
+        - ice t
+        - a tribe called quest
+        - naughty by nature
