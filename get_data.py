@@ -26,7 +26,7 @@ try:
 except Exception as e:
     print(str(e))
 
-SEEN_ARTISTS_FILENAME = 'seen_artists'
+SEEN_ARTISTS_FILENAME = f'seen_artists_{GENRE}'
 
 seen_artists_file = Path(SEEN_ARTISTS_FILENAME)
 
@@ -49,6 +49,8 @@ headers = {
     'cache-control': "no-cache"
     }
 
+artists_pool_temp = {}
+
 for ARTIST_NAME in ARTISTS_TO_GET:
     print(ARTIST_NAME)
 
@@ -57,23 +59,27 @@ for ARTIST_NAME in ARTISTS_TO_GET:
     response = requests.request("GET", search_url, headers=headers, params=search_query_string)
 
     resp = json.loads(response.text)
+    
+    if len(resp["artists"]["items"]) > 0:
+        artist_id = resp["artists"]["items"][0]["id"]
 
-    artist_id = resp["artists"]["items"][0]["id"]
+        similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-    similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+        similar_response = requests.request("GET", similar_url, headers=headers)
 
-    similar_response = requests.request("GET", similar_url, headers=headers)
+        similar_resp = json.loads(similar_response.text)
 
-    similar_resp = json.loads(similar_response.text)
+        for artist in similar_resp["artists"]:
+            if not ARTIST_NAME.lower() in artists_pool:
+                artists_pool[ARTIST_NAME.lower()] = artist["id"]
+                artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
 
-    for artist in similar_resp["artists"]:
-        if not ARTIST_NAME.lower() in artists_pool:
-            artists_pool[ARTIST_NAME.lower()] = artist["id"]
+            if not artist["name"].lower() in artists_pool:
+                artists_pool[artist["name"].lower()] = artist["id"]
+                artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-        if not artist["name"].lower() in artists_pool:
-            artists_pool[artist["name"].lower()] = artist["id"]
-        else:
-            print(f'Already seen {artist["name"].lower()}')
+            else:
+                print(f'Already seen {artist["name"].lower()}')
 
 # pprint.pprint(artists_pool)
 
@@ -93,7 +99,7 @@ for ARTIST_NAME in ARTISTS_TO_GET:
 
 albums = {}
 
-for artist_name, artist_id in artists_pool.items():
+for artist_name, artist_id in artists_pool_temp.items():
     print(f'Fetching {artist_name}\'s albums')
     url = f'https://api.spotify.com/v1/artists/{artist_id}/albums'
 
@@ -104,14 +110,15 @@ for artist_name, artist_id in artists_pool.items():
     resp = json.loads(response.text)
 
     artist_albums = []
-
-    for album in resp["items"]:
-        if album["album_type"] == "album":
-            try:
-                # print(album["album_type"], album["images"][1]["url"])
-                artist_albums.append(album["images"][1]["url"])
-            except Exception as e:
-                print(str(e))
+    
+    if not resp.get("items",-1) == -1:
+        for album in resp["items"]:
+            if album["album_type"] == "album":
+                try:
+                    # print(album["album_type"], album["images"][1]["url"])
+                    artist_albums.append(album["images"][1]["url"])
+                except Exception as e:
+                    print(str(e))
 
     albums[artist_id] = artist_albums
 

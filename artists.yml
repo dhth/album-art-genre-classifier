@@ -11,6 +11,11 @@ genres:
         - michael jackson
         - selena gomez
         - christina aguilera
+        - celine dion
+        - one direction
+        - mariah carey
+        - flo rida
+        - calvin harris
 
     rock:
         - led zeppelin
@@ -25,7 +30,7 @@ genres:
         - the doors
         - aerosmith
 
-    heavy metal:
+    heavy_metal:
         - black sabbath
         - iron maiden
         - metallica
@@ -37,6 +42,9 @@ genres:
         - arch enemy
         - mayhem
         - gojira
+        - arch enemy
+        - children of bodom
+        - morbid angel
 
     jazz:
         - miles davis
