@@ -5,6 +5,7 @@ import pickle
 from pathlib import Path
 import argparse
 import yaml
+from sys import exit
 
 parser = argparse.ArgumentParser(description='Fetch album art urls')
 parser.add_argument('genre', type=str,)
@@ -37,8 +38,13 @@ if seen_artists_file.is_file():
 else:
     artists_pool = {}
 
-with open('token.txt') as f:
-    TOKEN = f.read().strip()
+token_file = Path("token.txt")
+if token_file.is_file():
+    with open('token.txt') as f:
+        TOKEN = f.read().strip()
+else:
+    print("\nAdd token.txt file containing valid token.\n")
+    exit()
 
 search_url = "https://api.spotify.com/v1/search"
 
@@ -128,6 +134,9 @@ outfile.close()
 
 # pprint.pprint(albums)
 # with open(f"{ARTIST_NAME.replace(' ','_')}.txt",'wa') as f:
+
+url_dir = Path('spotify_urls').mkdir(parents=True, exist_ok=True) 
+
 with open(f"spotify_urls/{GENRE}.txt",'a') as f:
     for artist_id,album in albums.items():
         for album_url in album:
