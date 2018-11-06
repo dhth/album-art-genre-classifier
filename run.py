@@ -10,7 +10,14 @@ import sys
 import uvicorn
 import aiohttp
 import asyncio
+from PIL import Image as PILImage
 
+def encode(img):
+    img = (image2np(img.data) * 255).astype('uint8')
+    pil_img = PILImage.fromarray(img)
+    buff = BytesIO()
+    pil_img.save(buff, format="JPEG")
+    return base64.b64encode(buff.getvalue()).decode("utf-8")
 
 async def get_bytes(url):
     async with aiohttp.ClientSession() as session:
@@ -109,7 +116,11 @@ resp_html = """
         <h2>Album-art genre classifier</h2>
         <p class="lead">This is an image classifier API that takes in an image of an album cover and returns a prediction of the genre of the album.</p>
         <p>Currently supports classification in Rock-n-Roll or Pop/Rap</p>
-                <br><br>
+                <br>
+                <figure class="figure">
+                <img style="max-width:600px;" src="data:image/png;base64, {}" class="figure-img img-thumbnail input-image">
+                </figure>
+
         <p class="lead">It appears to be <b>{}</b></p>
         <p class="lead"><a href="/">go back</a></p>
         
@@ -147,7 +158,8 @@ async def classify_url(request):
 def predict_image_from_bytes(bytes):
     img = open_image(BytesIO(bytes))
     pred_class,pred_idx,outputs = learn.predict(img)
-    return HTMLResponse(resp_html.format(str(pred_class)))
+    img_data = encode(img)
+    return HTMLResponse(resp_html.format(img_data, str(pred_class)))
     #return JSONResponse({
     #    "prediction": pred_class
     #})
