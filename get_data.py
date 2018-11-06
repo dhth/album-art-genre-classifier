@@ -9,14 +9,14 @@ from sys import exit
 
 parser = argparse.ArgumentParser(description='Fetch album art urls')
 parser.add_argument('genre', type=str,)
-# parser.add_argument('artist_name', type=str,)
-parser.add_argument('--dry-run', type=bool,)
+parser.add_argument('--artists_file', type=str, default="artists.yml")
+parser.add_argument('--dry_run', type=bool,)
 
 args = parser.parse_args()
 
-ARTISTS_CONFIG_FILE = 'artists.yml'
+ARTISTS_CONFIG_FILE = args.artists_file
 
-with open('artists.yml') as f:
+with open(ARTISTS_CONFIG_FILE) as f:
     training_artists = yaml.load(f)
 
 GENRE = args.genre
@@ -58,37 +58,37 @@ headers = {
 artists_pool_temp = {}
 
 for ARTIST_NAME in ARTISTS_TO_GET:
-    print(ARTIST_NAME)
-try:
-        search_query_string = {"q":ARTIST_NAME,"type":"artist"}
+    print(ARTIST_NAME) 
+    try:
+            search_query_string = {"q":ARTIST_NAME,"type":"artist"}
 
-        response = requests.request("GET", search_url, headers=headers, params=search_query_string)
+            response = requests.request("GET", search_url, headers=headers, params=search_query_string)
 
-        resp = json.loads(response.text)
-        
-        if len(resp["artists"]["items"]) > 0:
-            artist_id = resp["artists"]["items"][0]["id"]
+            resp = json.loads(response.text)
+            
+            if len(resp["artists"]["items"]) > 0:
+                artist_id = resp["artists"]["items"][0]["id"]
 
-            similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+                similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-            similar_response = requests.request("GET", similar_url, headers=headers)
+                similar_response = requests.request("GET", similar_url, headers=headers)
 
-            similar_resp = json.loads(similar_response.text)
+                similar_resp = json.loads(similar_response.text)
 
-            for artist in similar_resp["artists"]:
-                if not ARTIST_NAME.lower() in artists_pool:
-                    artists_pool[ARTIST_NAME.lower()] = artist["id"]
-                    artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
+                for artist in similar_resp["artists"]:
+                    if not ARTIST_NAME.lower() in artists_pool:
+                        artists_pool[ARTIST_NAME.lower()] = artist["id"]
+                        artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
 
-                if not artist["name"].lower() in artists_pool:
-                    artists_pool[artist["name"].lower()] = artist["id"]
-                    artists_pool_temp[artist["name"].lower()] = artist["id"]
+                    if not artist["name"].lower() in artists_pool:
+                        artists_pool[artist["name"].lower()] = artist["id"]
+                        artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-                else:
-                    print(f'Already seen {artist["name"].lower()}')
-except Exception as e:
-    print(str(e))
-# pprint.pprint(artists_pool)
+                    else:
+                        print(f'Already seen {artist["name"].lower()}')
+    except Exception as e:
+        print(str(e))
+    # pprint.pprint(artists_pool)
 
 # for artist in similar_resp["artists"]:
 #     if not ARTIST_NAME.lower() in seen_artists:

@@ -2,3 +2,6 @@
 token.txt
 *.txt
 seen_artists*
+*.ipynb_checkpoints
+local_only*
+*swp
