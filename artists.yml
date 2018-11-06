@@ -1,4 +1,65 @@
 genres:
+    rock:
+        - led zeppelin
+        - acdc
+        - queen
+        - the beatles
+        - fleetwood mac
+        - bob dylan
+        - pink floyd
+        - the clash
+        - chuck berry
+        - the doors
+        - aerosmith
+        - red hot chili peppers
+        - yes
+        - kansas
+        - chicago
+        - scorpions
+
+    heavy_metal:
+        - black sabbath
+        - iron maiden
+        - metallica
+        - sepultura
+        - lamb of god
+        - opeth
+        - death
+        - amon amarth
+        - arch enemy
+        - mayhem
+        - gojira
+        - arch enemy
+        - children of bodom
+        - morbid angel
+        - van halen
+        - dream theater
+        - exodus
+        - overkill
+        - nightwish
+        - killswitch engage
+        - blind guardian 
+
+    jazz:
+        - miles davis
+        - john coltrane
+        - louis daniel armstrong
+        - dizzy gillespie
+        - duke ellington
+        - thelonious monk
+        - charlie parker
+        - ella fitzgerald
+        - benny goodman
+        - count basie
+        - lester young
+        - buddy rich
+        - ray brown
+        - bud powell
+        - gene krupa
+        - benny goodman
+        - george benson
+
+
     pop:
         - katy perry
         - madonna
@@ -16,49 +77,28 @@ genres:
         - mariah carey
         - flo rida
         - calvin harris
+        - elton john 
+        - whitney houston
+        - bees gees
+        - gwen stefani
+        - liza minelli
+        - annie lennox
+        - sheryl crow
+        - shania twain
+        - george michael
+        - shakira
+        - robbie williams
+        - backstreet boys
+        - demi lovato
+        - the pussycat dolls
+        - kelly clarkson
+        - james blunt
+        - fall out boy
+        - kylie minogue
+        - nelly furtado
+        - pink
+        - keri hilson    
 
-    rock:
-        - led zeppelin
-        - acdc
-        - queen
-        - the beatles
-        - fleetwood mac
-        - bob dylan
-        - pink floyd
-        - the clash
-        - chuck berry
-        - the doors
-        - aerosmith
-
-    heavy_metal:
-        - black sabbath
-        - iron maiden
-        - metallica
-        - sepultura
-        - lamb of god
-        - opeth
-        - death
-        - amon amarth
-        - arch enemy
-        - mayhem
-        - gojira
-        - arch enemy
-        - children of bodom
-        - morbid angel
-
-    jazz:
-        - miles davis
-        - john coltrane
-        - louis daniel armstrong
-        - dizzy gillespie
-        - duke ellington
-        - thelonious monk
-        - charlie parker
-        - ella fitzgerald
-        - benny goodman
-        - count basie
-        - lester young
-        
     rap:
         - dr dre
         - eminem
@@ -71,3 +111,13 @@ genres:
         - ice t
         - a tribe called quest
         - naughty by nature
+        - easy e
+        - lil wayne
+        - big sean
+        - ti
+        - chance the rapper
+        - wiz khalifa
+        - nate dogg
+        - 2 chainz
+        - mobb deep
+        - pusha t    

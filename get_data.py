@@ -59,34 +59,35 @@ artists_pool_temp = {}
 
 for ARTIST_NAME in ARTISTS_TO_GET:
     print(ARTIST_NAME)
+try:
+        search_query_string = {"q":ARTIST_NAME,"type":"artist"}
 
-    search_query_string = {"q":ARTIST_NAME,"type":"artist"}
+        response = requests.request("GET", search_url, headers=headers, params=search_query_string)
 
-    response = requests.request("GET", search_url, headers=headers, params=search_query_string)
+        resp = json.loads(response.text)
+        
+        if len(resp["artists"]["items"]) > 0:
+            artist_id = resp["artists"]["items"][0]["id"]
 
-    resp = json.loads(response.text)
-    
-    if len(resp["artists"]["items"]) > 0:
-        artist_id = resp["artists"]["items"][0]["id"]
+            similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-        similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+            similar_response = requests.request("GET", similar_url, headers=headers)
 
-        similar_response = requests.request("GET", similar_url, headers=headers)
+            similar_resp = json.loads(similar_response.text)
 
-        similar_resp = json.loads(similar_response.text)
+            for artist in similar_resp["artists"]:
+                if not ARTIST_NAME.lower() in artists_pool:
+                    artists_pool[ARTIST_NAME.lower()] = artist["id"]
+                    artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
 
-        for artist in similar_resp["artists"]:
-            if not ARTIST_NAME.lower() in artists_pool:
-                artists_pool[ARTIST_NAME.lower()] = artist["id"]
-                artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
+                if not artist["name"].lower() in artists_pool:
+                    artists_pool[artist["name"].lower()] = artist["id"]
+                    artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-            if not artist["name"].lower() in artists_pool:
-                artists_pool[artist["name"].lower()] = artist["id"]
-                artists_pool_temp[artist["name"].lower()] = artist["id"]
-
-            else:
-                print(f'Already seen {artist["name"].lower()}')
-
+                else:
+                    print(f'Already seen {artist["name"].lower()}')
+except Exception as e:
+    print(str(e))
 # pprint.pprint(artists_pool)
 
 # for artist in similar_resp["artists"]:
