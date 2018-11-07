@@ -31,7 +31,7 @@ app = Starlette()
 
 path = Path('data/')
 
-classes = ['pop/rap','rock-n-roll']
+classes = ['pop/rap','rock/heavy-metal']
 data2 = ImageDataBunch.single_from_classes(path, classes, tfms=get_transforms(), size=224).normalize(imagenet_stats)
 learn = create_cnn(data2, models.resnet50, pretrained=False)
 learn.load('resnet-50-2-classes-3975-im-stage-2')
@@ -57,7 +57,7 @@ index_html = """
       <div class="py-5 text-center">
         <h2>Album-art genre classifier</h2>
         <p class="lead">This is an image classifier API that takes in an image of an album cover and returns a prediction of the genre of the album.</p>
-        <p>Currently supports classification in Rock-n-Roll or Pop/Rap</p>
+        <p>Currently supports classification in Rock/Heavy Metal or Pop/Rap</p>
         
       </div>
 <div class="row justify-content-center">
@@ -80,6 +80,17 @@ index_html = """
       </form>
           
   </div>
+  </div>
+      <br><br>
+     <div align="center" class="row justify-content-center">
+       <div class="col-4">
+         <p>Rock/HM example:</p>
+         <a href=""><img width=300px src="http://wwwcdn.goldminemag.com/wp-content/uploads/2011/05/Savage_LooseNLethal.jpg"></a>
+       </div>
+    <div class="col-4">
+      <p>Pop/rap example:</p>
+      <a href=""><img width=300px src="http://4.bp.blogspot.com/-ixz9_hrHt40/USZmiaQaytI/AAAAAAAACI8/sCsxhAZvwUE/s1600/R-149119-1279003359.jpeg"></a>
+    </div>
   </div>
         
 <div class="row justify-content-center">
@@ -117,7 +128,7 @@ resp_html = """
       <div class="py-5 text-center">
         <h2>Album-art genre classifier</h2>
         <p class="lead">This is an image classifier API that takes in an image of an album cover and returns a prediction of the genre of the album.</p>
-        <p>Currently supports classification in Rock-n-Roll or Pop/Rap</p>
+        <p>Currently supports classification in Rock/Heavy Metal or Pop/Rap</p>
                 <br>
                 <figure class="figure">
                 <img style="max-width:500px;" src="data:image/png;base64, {}" class="figure-img img-thumbnail input-image">
