@@ -11,6 +11,8 @@ import uvicorn
 import aiohttp
 import asyncio
 from PIL import Image as PILImage
+from fastai.vision import image2np
+import base64
 
 def encode(img):
     img = (image2np(img.data) * 255).astype('uint8')
@@ -29,9 +31,9 @@ app = Starlette()
 
 path = Path('data/')
 
-classes = ['rock-n-roll', 'pop-slash-rap']
+classes = ['pop/rap','rock-n-roll']
 data2 = ImageDataBunch.single_from_classes(path, classes, tfms=get_transforms(), size=224).normalize(imagenet_stats)
-learn = create_cnn(data2, models.resnet50)
+learn = create_cnn(data2, models.resnet50, pretrained=False)
 learn.load('resnet-50-2-classes-3975-im-stage-2')
 
 index_html = """
@@ -118,7 +120,7 @@ resp_html = """
         <p>Currently supports classification in Rock-n-Roll or Pop/Rap</p>
                 <br>
                 <figure class="figure">
-                <img style="max-width:600px;" src="data:image/png;base64, {}" class="figure-img img-thumbnail input-image">
+                <img style="max-width:500px;" src="data:image/png;base64, {}" class="figure-img img-thumbnail input-image">
                 </figure>
 
         <p class="lead">It appears to be <b>{}</b></p>
