@@ -10,11 +10,22 @@ from sys import exit
 parser = argparse.ArgumentParser(description='Fetch album art urls')
 parser.add_argument('genre', type=str,)
 parser.add_argument('--artists_file', type=str, default="artists.yml")
-parser.add_argument('--dry_run', type=bool,)
+parser.add_argument('--fetch', type=str, default="n")
+parser.add_argument('--delta', type=str, default="n")
 
 args = parser.parse_args()
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+
 ARTISTS_CONFIG_FILE = args.artists_file
+
+FETCH = str2bool(args.fetch)
+DELTA = str2bool(args.delta)
+print(FETCH,DELTA)
 
 with open(ARTISTS_CONFIG_FILE) as f:
     training_artists = yaml.load(f)
@@ -57,88 +68,87 @@ headers = {
 
 artists_pool_temp = {}
 
+########## -------- GENERATING POOL ----------
+
 for ARTIST_NAME in ARTISTS_TO_GET:
-    print(ARTIST_NAME) 
+    
+    print(f'--> {ARTIST_NAME}')
+
     try:
-            search_query_string = {"q":ARTIST_NAME,"type":"artist"}
+        search_query_string = {"q":ARTIST_NAME,"type":"artist"}
 
-            response = requests.request("GET", search_url, headers=headers, params=search_query_string)
+        response = requests.request("GET", search_url, headers=headers, params=search_query_string)
 
-            resp = json.loads(response.text)
-            
-            if len(resp["artists"]["items"]) > 0:
-                artist_id = resp["artists"]["items"][0]["id"]
+        resp = json.loads(response.text)
+        
+        if len(resp["artists"]["items"]) > 0:
+            artist_id = resp["artists"]["items"][0]["id"]
 
-                similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+            if not ARTIST_NAME.lower() in artists_pool:
+                artists_pool[ARTIST_NAME.lower()] = artist_id
+                artists_pool_temp[ARTIST_NAME.lower()] = artist_id
+            # else:
+            #     print(f'Already seen {ARTIST_NAME.lower()}')
 
-                similar_response = requests.request("GET", similar_url, headers=headers)
+            similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-                similar_resp = json.loads(similar_response.text)
+            similar_response = requests.request("GET", similar_url, headers=headers)
 
-                for artist in similar_resp["artists"]:
-                    if not ARTIST_NAME.lower() in artists_pool:
-                        artists_pool[ARTIST_NAME.lower()] = artist["id"]
-                        artists_pool_temp[ARTIST_NAME.lower()] = artist["id"]
+            similar_resp = json.loads(similar_response.text)
 
-                    if not artist["name"].lower() in artists_pool:
-                        artists_pool[artist["name"].lower()] = artist["id"]
-                        artists_pool_temp[artist["name"].lower()] = artist["id"]
+            for artist in similar_resp["artists"]:
+                if not artist["name"].lower() in artists_pool:
+                    artists_pool[artist["name"].lower()] = artist["id"]
+                    artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-                    else:
-                        print(f'Already seen {artist["name"].lower()}')
+                else:
+                    print(f'Already seen {artist["name"].lower()}')
     except Exception as e:
         print(str(e))
-    # pprint.pprint(artists_pool)
 
-# for artist in similar_resp["artists"]:
-#     if not ARTIST_NAME.lower() in seen_artists:
-#         seen_artists[ARTIST_NAME.lower()] = artist["id"]
-#         artist_ids.append(artist_id)
-#         artist_names.append(ARTIST_NAME.lower())
-#     # print(artist["name"], artist["id"])
-#     if not artist["name"].lower() in seen_artists:
-#         # seen_artists.append(artist["name"])
-#         artist_ids.append(artist["id"])
-#         artist_names.append(artist["name"].lower())
-#         seen_artists[artist["name"].lower()] = artist["id"]
-#     else:
-#         print(f'Already seen {artist["name"].lower()}')
 
-albums = {}
-
-for artist_name, artist_id in artists_pool_temp.items():
-    print(f'Fetching {artist_name}\'s albums')
-    url = f'https://api.spotify.com/v1/artists/{artist_id}/albums'
-
-    albums_query_string = {"limit":"30"}
-
-    response = requests.request("GET", url, headers=headers, params=albums_query_string)
-
-    resp = json.loads(response.text)
-
-    artist_albums = []
-    
-    if not resp.get("items",-1) == -1:
-        for album in resp["items"]:
-            if album["album_type"] == "album":
-                try:
-                    # print(album["album_type"], album["images"][1]["url"])
-                    artist_albums.append(album["images"][1]["url"])
-                except Exception as e:
-                    print(str(e))
-
-    albums[artist_id] = artist_albums
+print(f"Collected {len(artists_pool.keys())} unique artists for genre: {GENRE}")
 
 outfile = open(SEEN_ARTISTS_FILENAME,'wb')
 pickle.dump(artists_pool,outfile)
 outfile.close()
 
-# pprint.pprint(albums)
-# with open(f"{ARTIST_NAME.replace(' ','_')}.txt",'wa') as f:
+########## -------- FETCHING ----------
 
-url_dir = Path('spotify_urls').mkdir(parents=True, exist_ok=True) 
+if FETCH:
+    albums = {}
 
-with open(f"spotify_urls/{GENRE}.txt",'a') as f:
-    for artist_id,album in albums.items():
-        for album_url in album:
-            f.write(album_url+'\n')
+    if DELTA:
+        dict_to_fetch = artists_pool_temp
+    else:
+        dict_to_fetch = artists_pool
+
+    for artist_name, artist_id in dict_to_fetch.items():
+        print(f'Fetching {artist_name}\'s albums')
+        url = f'https://api.spotify.com/v1/artists/{artist_id}/albums'
+
+        albums_query_string = {"limit":"30"}
+
+        response = requests.request("GET", url, headers=headers, params=albums_query_string)
+
+        resp = json.loads(response.text)
+
+        artist_albums = []
+        
+        if not resp.get("items",-1) == -1:
+            for album in resp["items"]:
+                if album["album_type"] == "album":
+                    try:
+                        # print(album["album_type"], album["images"][1]["url"])
+                        artist_albums.append(album["images"][1]["url"])
+                    except Exception as e:
+                        print(str(e))
+
+        albums[artist_id] = artist_albums
+
+    url_dir = Path('spotify_urls').mkdir(parents=True, exist_ok=True) 
+
+    with open(f"spotify_urls/{GENRE}.txt",'a') as f:
+        for artist_id,album in albums.items():
+            for album_url in album:
+                f.write(album_url+'\n')
