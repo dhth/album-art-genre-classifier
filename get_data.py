@@ -12,6 +12,7 @@ parser.add_argument('genre', type=str,)
 parser.add_argument('--artists_file', type=str, default="artists.yml")
 parser.add_argument('--fetch', type=str, default="n")
 parser.add_argument('--delta', type=str, default="n")
+parser.add_argument('--fetch_only', type=str, default="n")
 
 args = parser.parse_args()
 
@@ -25,7 +26,7 @@ ARTISTS_CONFIG_FILE = args.artists_file
 
 FETCH = str2bool(args.fetch)
 DELTA = str2bool(args.delta)
-print(FETCH,DELTA)
+FETCH_ONLY = str2bool(args.fetch_only)
 
 with open(ARTISTS_CONFIG_FILE) as f:
     training_artists = yaml.load(f)
@@ -69,49 +70,49 @@ headers = {
 artists_pool_temp = {}
 
 ########## -------- GENERATING POOL ----------
+if not FETCH_ONLY:
+    for ARTIST_NAME in ARTISTS_TO_GET:
 
-for ARTIST_NAME in ARTISTS_TO_GET:
-    
-    print(f'--> {ARTIST_NAME}')
+        print(f'--> {ARTIST_NAME}')
 
-    try:
-        search_query_string = {"q":ARTIST_NAME,"type":"artist"}
+        try:
+            search_query_string = {"q":ARTIST_NAME,"type":"artist"}
 
-        response = requests.request("GET", search_url, headers=headers, params=search_query_string)
+            response = requests.request("GET", search_url, headers=headers, params=search_query_string)
 
-        resp = json.loads(response.text)
-        
-        if len(resp["artists"]["items"]) > 0:
-            artist_id = resp["artists"]["items"][0]["id"]
+            resp = json.loads(response.text)
 
-            if not ARTIST_NAME.lower() in artists_pool:
-                artists_pool[ARTIST_NAME.lower()] = artist_id
-                artists_pool_temp[ARTIST_NAME.lower()] = artist_id
-            # else:
-            #     print(f'Already seen {ARTIST_NAME.lower()}')
+            if len(resp["artists"]["items"]) > 0:
+                artist_id = resp["artists"]["items"][0]["id"]
 
-            similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+                if not ARTIST_NAME.lower() in artists_pool:
+                    artists_pool[ARTIST_NAME.lower()] = artist_id
+                    artists_pool_temp[ARTIST_NAME.lower()] = artist_id
+                # else:
+                #     print(f'Already seen {ARTIST_NAME.lower()}')
 
-            similar_response = requests.request("GET", similar_url, headers=headers)
+                similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-            similar_resp = json.loads(similar_response.text)
+                similar_response = requests.request("GET", similar_url, headers=headers)
 
-            for artist in similar_resp["artists"]:
-                if not artist["name"].lower() in artists_pool:
-                    artists_pool[artist["name"].lower()] = artist["id"]
-                    artists_pool_temp[artist["name"].lower()] = artist["id"]
+                similar_resp = json.loads(similar_response.text)
 
-                else:
-                    print(f'Already seen {artist["name"].lower()}')
-    except Exception as e:
-        print(str(e))
+                for artist in similar_resp["artists"]:
+                    if not artist["name"].lower() in artists_pool:
+                        artists_pool[artist["name"].lower()] = artist["id"]
+                        artists_pool_temp[artist["name"].lower()] = artist["id"]
+
+                    else:
+                        print(f'Already seen {artist["name"].lower()}')
+        except Exception as e:
+            print(str(e))
 
 
-print(f"Collected {len(artists_pool.keys())} unique artists for genre: {GENRE}")
+    print(f"Collected {len(artists_pool.keys())} unique artists for genre: {GENRE}")
 
-outfile = open(SEEN_ARTISTS_FILENAME,'wb')
-pickle.dump(artists_pool,outfile)
-outfile.close()
+    outfile = open(SEEN_ARTISTS_FILENAME,'wb')
+    pickle.dump(artists_pool,outfile)
+    outfile.close()
 
 ########## -------- FETCHING ----------
 

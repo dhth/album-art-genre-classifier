@@ -16,6 +16,16 @@ genres:
         - kansas
         - chicago
         - scorpions
+        - pearl jam
+        - foo fighters
+        - green day
+        - creedence clearwater revival
+        - jefferson airplane
+        - the strokes
+        - iggy pop
+        - bon jovi
+        - the beach boys
+        - steppenwolf
 
     heavy_metal:
         - black sabbath
@@ -38,9 +48,61 @@ genres:
         - overkill
         - nightwish
         - killswitch engage
-        - blind guardian 
+        - blind guardian
+        - celtic frost
+        - napalm death
+        - entombed
+        - amorphis
+        - stratovarius
+        - dissection
+        - him
+        - rammstein
+        - mastodon
+        - slipknot
+        - dio
+        - in flames
+        - saxon
+        - cradle of filth
+        - overkill
 
     jazz:
+        - Buddy Bolden
+        - Bunk Johnson
+        - Joe King Oliver
+        - Edward Kid Ory
+        - Freddie Keppard
+        - Nick LaRocca
+        - Jelly Roll Morton
+        - Jimmie Noone
+        - Sidney Bechet
+        - Louis Armstrong
+        - Bix Beiderbecke
+        - Earl Hines
+        - Red Nichols
+        - Paul Whiteman
+        - Fletcher Henderson
+        - Duke Ellington
+        - Earl Hines
+        - Coleman Hawkins
+        - Count Basie
+        - Fats Waller
+        - Glenn Miller
+        - Jimmy Dorsey
+        - Benny Carter
+        - Gil Evans
+        - Maynard Ferguson
+        - Clare Fischer
+        - Dizzy Gillespie
+        - Dexter Gordon
+        - Stéphane Grappelli
+        - Tigran Hamasyan
+        - Chico Hamilton
+        - Herbie Hancock
+        - Joe Harriott
+        - Thad Jones
+        - Milt Jackson
+        - Stan Kenton
+        - Mark Kramer
         - miles davis
         - john coltrane
         - louis daniel armstrong
@@ -96,10 +158,22 @@ genres:
         - fall out boy
         - kylie minogue
         - nelly furtado
-        - pink
         - keri hilson    
+        - carrie underwood
+        - jay sean
+        - lee ann womack
+        - faith hill
+        - nsync
+        - gorillaz
+        - kelis
+        - eiffel 65
+        - feist
+        - nelly furtado
+        - alicia keys
+        - aaliyah
+        - 
 
-    rap:
+    hip-hop:
         - dr dre
         - eminem
         - wu tang clan
@@ -120,4 +194,41 @@ genres:
         - nate dogg
         - 2 chainz
         - mobb deep
-        - pusha t    
+        - pusha t
+        - souls of mischief
+        - ll cool j
+        - black milk
+        - geto boys
+        - black moon
+        - slick rick
+        - method man
+        - masta ace
+        - big l
+        - run dmc
+        - j dilla
+        - madvillian
+        - common
+        - warren g
+        - kool keith
+        - the game
+        - diamond d
+        - devin the dude
+        - busta rhymes
+        - roots manuva
+        - q tip
+        - big daddy kane
+        - marley marl
+        - stetasonic
+        - muggs
+        - y society
+        - xxxtentacion
+        - nicki minaj
+        - tony yayo
+        - takeoff
+        - future
+        - ja rule
+        - bow wow
+        - kodak black
+        - kevin gates
+        - post malone
+        - g unit
