@@ -6,6 +6,7 @@ from sys import exit
 
 parser = argparse.ArgumentParser(description='Remove duplicate artists')
 parser.add_argument('remove', type=str, default="y")
+parser.add_argument('--artists_file', type=str, default="artists.yml")
 
 args = parser.parse_args()
 
@@ -21,7 +22,7 @@ if REMOVE is None:
     print('Enter correct value of argument remove -> y or n')
     exit()
     
-ARTISTS_CONFIG_FILE = "artists.yml"
+ARTISTS_CONFIG_FILE = args.artists_file
 
 with open(ARTISTS_CONFIG_FILE) as f:
     training_artists = yaml.load(f)

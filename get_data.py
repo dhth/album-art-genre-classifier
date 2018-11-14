@@ -6,6 +6,7 @@ from pathlib import Path
 import argparse
 import yaml
 from sys import exit
+from time import sleep
 
 parser = argparse.ArgumentParser(description='Fetch album art urls')
 parser.add_argument('genre', type=str,)
@@ -102,8 +103,8 @@ if not FETCH_ONLY:
                         artists_pool[artist["name"].lower()] = artist["id"]
                         artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-                    else:
-                        print(f'Already seen {artist["name"].lower()}')
+                    #else:
+                        #print(f'Already seen {artist["name"].lower()}')
         except Exception as e:
             print(str(e))
 
@@ -123,9 +124,17 @@ if FETCH:
         dict_to_fetch = artists_pool_temp
     else:
         dict_to_fetch = artists_pool
-
+    
+    count = 1
+    
     for artist_name, artist_id in dict_to_fetch.items():
-        print(f'Fetching {artist_name}\'s albums')
+        
+        #workaround for rate-limiting
+        if count % 50 == 0:
+            print('\n\n\t\tsleeping...\n\n')
+            sleep(3)
+            
+        print(f'Fetching {artist_name}\'s albums',)
         url = f'https://api.spotify.com/v1/artists/{artist_id}/albums'
 
         albums_query_string = {"limit":"30"}
@@ -137,6 +146,7 @@ if FETCH:
         artist_albums = []
         
         if not resp.get("items",-1) == -1:
+            print(f' --> {len(resp["items"])}')
             for album in resp["items"]:
                 if album["album_type"] == "album":
                     try:
@@ -146,6 +156,7 @@ if FETCH:
                         print(str(e))
 
         albums[artist_id] = artist_albums
+        count+=1
 
     url_dir = Path('spotify_urls').mkdir(parents=True, exist_ok=True) 
 
