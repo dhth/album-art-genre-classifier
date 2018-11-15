@@ -12,10 +12,15 @@ File to be used: `get_data.py`. Getting data is divided into to parts:
     ```bash
     $ python get_data.py GENRE_NAME --artists_file ARTISTS_FILE --fetch n
     ```
-- Cleanup of duplicate artists (eg. black sabbath can appear in rock as well as heavy metal). This will individually ask you to assign an artist to a single genre.
-    ```bash
-    $ python clean_duplicates.py y
-    ```
+- Cleanup of duplicate artists (eg. black sabbath can appear in rock as well as heavy metal).
+    - Individually clean up each artist(ie, assign to one genre):
+        ```bash
+        $ python handle_duplicates.py y --artists_file ARTISTS_FILE
+        ```
+    - Remove all instances of duplicates (will decrease number of pooled artists):
+        ```bash
+        $ python handle_duplicates.py y --artists_file ARTISTS_FILE --direct_remove y
+        ```
 - Fetching albums
     ```bash
     $ python get_data.py GENRE_NAME --artists_file ARTISTS_FILE --fetch y --fetch_only y

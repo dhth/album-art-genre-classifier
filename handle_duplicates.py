@@ -7,6 +7,7 @@ from sys import exit
 parser = argparse.ArgumentParser(description='Remove duplicate artists')
 parser.add_argument('remove', type=str, default="y")
 parser.add_argument('--artists_file', type=str, default="artists.yml")
+parser.add_argument('--direct_remove', type=str, default="n")
 
 args = parser.parse_args()
 
@@ -16,7 +17,9 @@ def str2bool(v):
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
         return False
 
-REMOVE = str2bool(args.remove)    
+REMOVE = str2bool(args.remove)
+DIRECT_REMOVE = str2bool(args.direct_remove)
+
 
 if REMOVE is None:
     print('Enter correct value of argument remove -> y or n')
@@ -58,13 +61,17 @@ for i in range(len(artists)-1):
         for el in artist_1.intersection(artist_2):
             print(f'\t{el}')
             if REMOVE:
-                remove_from = int(input(f'Is {el} {GENRES[i]}(0) or {GENRES[j]}(1)?\n'))
-                if remove_from == 0:
-                    remove_index = j
-                elif remove_from == 1:
-                    remove_index = i
-                if remove_from in [0,1]:
-                    seen_artists[remove_index].pop(el, None)
+                if DIRECT_REMOVE:  #directly remove all instances of duplicate artist without asking for each
+                    seen_artists[i].pop(el, None)
+                    seen_artists[j].pop(el, None)
+                else:
+                    remove_from = int(input(f'Is {el} {GENRES[i]}(0) or {GENRES[j]}(1)?\n'))
+                    if remove_from == 0:
+                        remove_index = j
+                    elif remove_from == 1:
+                        remove_index = i
+                    if remove_from in [0,1]:
+                        seen_artists[remove_index].pop(el, None)
             
         print('\n\n\t-------------\n\n')
 
