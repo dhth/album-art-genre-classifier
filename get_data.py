@@ -14,6 +14,7 @@ parser.add_argument('--artists_file', type=str, default="artists.yml")
 parser.add_argument('--fetch', type=str, default="n")
 parser.add_argument('--delta', type=str, default="n")
 parser.add_argument('--fetch_only', type=str, default="n")
+parser.add_argument('--find_similar', type=str, default="n")
 
 args = parser.parse_args()
 
@@ -28,6 +29,7 @@ ARTISTS_CONFIG_FILE = args.artists_file
 FETCH = str2bool(args.fetch)
 DELTA = str2bool(args.delta)
 FETCH_ONLY = str2bool(args.fetch_only)
+FIND_SIMILAR = str2bool(args.find_similar)
 
 with open(ARTISTS_CONFIG_FILE) as f:
     training_artists = yaml.load(f)
@@ -91,20 +93,22 @@ if not FETCH_ONLY:
                     artists_pool_temp[ARTIST_NAME.lower()] = artist_id
                 # else:
                 #     print(f'Already seen {ARTIST_NAME.lower()}')
+                
+                if FIND_SIMILAR:
 
-                similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
+                    similar_url = f'https://api.spotify.com/v1/artists/{artist_id}/related-artists'
 
-                similar_response = requests.request("GET", similar_url, headers=headers)
+                    similar_response = requests.request("GET", similar_url, headers=headers)
 
-                similar_resp = json.loads(similar_response.text)
+                    similar_resp = json.loads(similar_response.text)
 
-                for artist in similar_resp["artists"]:
-                    if not artist["name"].lower() in artists_pool:
-                        artists_pool[artist["name"].lower()] = artist["id"]
-                        artists_pool_temp[artist["name"].lower()] = artist["id"]
+                    for artist in similar_resp["artists"]:
+                        if not artist["name"].lower() in artists_pool:
+                            artists_pool[artist["name"].lower()] = artist["id"]
+                            artists_pool_temp[artist["name"].lower()] = artist["id"]
 
-                    #else:
-                        #print(f'Already seen {artist["name"].lower()}')
+                        #else:
+                            #print(f'Already seen {artist["name"].lower()}')
         except Exception as e:
             print(str(e))
 
